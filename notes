@@ -1,1 +1,3 @@
 cf-agent -KI -f (filename)
+
+-b to specify sequence without common control body
