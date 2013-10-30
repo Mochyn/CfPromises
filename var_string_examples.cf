@@ -11,9 +11,11 @@ bundle agent test
 				is a
 				multiline string";
 		"s3" string => "with \"quotes\"";
+		"s4" string => "$(sys.workdir)";
 	reports:
 		cfengine::
 			"s1 = $(s1)";
 			"s2 = $(s2)";
 			"s3 = $(s3)";
+			"s4 = $(s4)";
 }
