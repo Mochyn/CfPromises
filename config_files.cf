@@ -15,8 +15,9 @@ bundle agent configfiles
 {
 	vars:
 		#Files to Edit
-		"files[sysctl]" string => "/etc/sysctl.conf";
-		"files[sshd]"	string => "/etc/ssh/ssh_config";
+		"files[sysctl]" 	string => "/etc/sysctl.conf";
+		"files[sshd]"		string => "/etc/ssh/ssh_config";
+		"files[inittab]"	string => "/etc/inittab";
 
 		#Sysctl variables to set
 		"sysctl[net.ipv4.tcp_syncookies]"		string => "1";
@@ -31,8 +32,9 @@ bundle agent configfiles
 		"sshd[UseDNS]"					string => "no";
 
 	methods:
-		"sysctl" usebundle => edit_sysctl;
-		"sshd" usebundle => edit_sshd;
+		"sysctl"	usebundle => edit_sysctl;
+		"sshd"		usebundle => edit_sshd;
+		"inittab"	usebundle => edit_inittab;
 }
 
 bundle agent edit_sysctl
@@ -65,4 +67,21 @@ bundle agent edit_sshd
 			"/etc/init.d/ssh reload"
 				handle => "sshd_restart",
 				comment => "Restart sshd if the configuration file was modified";
+}
+
+bundle agent edit_inittab
+{
+	files:
+		"$(configfiles.files[inittab])"
+			handle => "inittab_set_initdefault",
+			comment => "Ensure graphical mode is disabled (default runmode=3)",
+			create => "false",
+			edit_defaults => backup_timestamp,
+			edit_line => set_colon_field("id", "2", "3");
+		"$(configfiles.files[inittab])"
+			handle => "inittab disable crtlaltdel",
+			comment => "Ensure handling of crtl-alt-del i disabled",
+			create => "false",
+			edit_defaults => backup_timestamp,
+			edit_line => comment_lines_matching("ca::ctrlaltdel:.*", "#");
 }
