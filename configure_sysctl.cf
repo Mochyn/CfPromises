@@ -1,3 +1,16 @@
+body common control
+{
+	bundlesequence => {  "inputs" } ;
+	inputs => { @(inputs.files) };
+	bundlesequence => { "configfiles" };
+}
+
+bundle common inputs
+{
+	vars:
+		"files" slist => {"/var/cfengine/inputs/libraries/cfengine_stdlib.cf" };
+}
+
 bundle agent configfiles
 {
 	vars:
